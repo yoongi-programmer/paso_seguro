@@ -4,4 +4,8 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_screen_splash">ScreenSplash</string>
     <string name="msj_bienvenida">Bienvenido</string>
+    <string name="Escuchar">Bienvenido</string>
+    <string name="conectado">Bienvenido</string>
+    <string name="desconectado">Bienvenido</string>
+    <string name="escuchar">Escuchar</string>
 </resources>
