@@ -5,10 +5,12 @@
     <color name="purple_700">#FF3700B3</color>
     <color name="verde_agua">#1AB7A4</color>
     <color name="verde_aqua2">#3BE0C5</color>
+    <color name="verde_agua_oscuro">#036277</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="gris">#818181</color>
-    <color name="gris_negro">#1C1C1C</color>
+    <color name="gris_claro">#CBCBCB</color>
+    <color name="negro_gris">#1C1C1C</color>
     <color name="rojo_on">#F00000</color>
     <color name="rojo_off">#6F0000</color>
     <color name="amarillo_on">#E0CE00</color>
