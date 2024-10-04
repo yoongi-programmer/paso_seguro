@@ -62,9 +62,9 @@ class HomeFragment : Fragment() {
     private lateinit var bluetoothDevice: BluetoothDevice
     var estadoSemaforo = 0
     private var semaforoActivo = true
-    var estadoRojo = false
-    var estadoAmarillo = false
-    var estadoVerde = false
+    var estadoRojo = 0
+    var estadoAmarillo = 0
+    var estadoVerde = 0
     private var mediaPlayer : MediaPlayer? = null
     private val handler = Handler(Looper.getMainLooper())
     override fun onCreateView(
@@ -83,10 +83,9 @@ class HomeFragment : Fragment() {
             requestLegacyBluetoothPermissions()// Solicitar permisos de Bluetooth para Android 11 y anteriores
         }
         binding.btEscuchar.setOnClickListener{
-            playAudio()
             iniciarSemaforo()
         }
-        playAudio()
+        playAudio(R.raw.bienvenido)
 
         Log.d("HomeFragment", "isConnected: $isConnected")
         if (isConnected){
@@ -250,26 +249,19 @@ class HomeFragment : Fragment() {
 
     private fun parseData(data: String) {
         Log.d("HomeFragment", "Parsing data: $data")
-        try {
-            val estadoSemaforo = data.trim().toInt()  // Lee el estado recibido
-            Log.d("HomeFragment", "Estado recibido: $estadoSemaforo")
-            when (estadoSemaforo) {
-                1 -> {
-                    Log.d("HomeFragment", "Semáforo Rojo")
-                }
-                2 -> {
-                    Log.d("HomeFragment", "Semáforo Amarillo")
-                }
-                3 -> {
-                    Log.d("HomeFragment", "Semáforo Verde")
-                }
-                else -> {
-                    Log.e("HomeFragment", "Estado no reconocido")
-                }
+        val parts = data.split("|")
+        if (parts.size == 1) {
+            try {
+                // Parsear todos los datos a el formato correspondiente
+                estadoVerde = parts[0].toInt()
+                estadoAmarillo = parts[1].toInt()
+            } catch (e: NumberFormatException) {
+                Log.e("homeFragment", "Error parsing data: ${e.message}")
             }
-        } catch (e: NumberFormatException) {
-            Log.e("HomeFragment", "Error parsing data: ${e.message}")
+        } else {
+            Log.e("homeFragment", "Data format error: expected 2 parts, got ${parts.size}")
         }
+
     }
 
 
@@ -282,10 +274,10 @@ class HomeFragment : Fragment() {
             binding.estadoSemaforo.text = "Estado del semaforo: Rojo"
 
         }
-        else if (estadoSemaforo == 2) {
+        else if (estadoSemaforo == 1) {
             binding.estadoSemaforo.text = "Estado del semaforo: Amarillo"
         }
-        else if (estadoSemaforo == 3) {
+        else if (estadoSemaforo == 1) {
             binding.estadoSemaforo.text = "Estado del semaforo: Verde"
         }
 
@@ -322,8 +314,8 @@ class HomeFragment : Fragment() {
 
     }
 
-    private fun playAudio() {
-        mediaPlayer = MediaPlayer.create(requireContext(), R.raw.bienvenido)
+    private fun playAudio(audioResID: Int) {
+        mediaPlayer = MediaPlayer.create(requireContext(), audioResID)
         if (mediaPlayer == null) {
             Log.e("MediaPlayer", "Error al crear el MediaPlayer")
         } else {
