@@ -188,7 +188,7 @@ class HomeFragment : Fragment() {
                     }
 
                 } catch (e: IOException) {
-                    Log.e("HomeFragment", "Error al conectar: ${e.message}")
+                    Log.i("HomeFragment", "No se encontraron dispositivos: ${e.message}")
                     requireActivity().runOnUiThread {
                         // No mostrar el error si no se encuentra el dispositivo, solo continuar intentando
                         binding.txtConectado.text = "Buscando dispositivo..."
@@ -210,6 +210,7 @@ class HomeFragment : Fragment() {
 
 
     private fun startDataReceiving() {
+        Log.d("HomeFragment", "Recibiendo datos:")
         val socket = bluetoothSocket
         if (socket != null) {
             val inputStream = socket.inputStream
@@ -230,6 +231,7 @@ class HomeFragment : Fragment() {
                             if (line.isNotEmpty()) {
                                 Log.d("HomeFragment", "Received data: $line")
                                 parseData(line)
+                                updateUI()
                             }
                         }
                         stringBuilder.clear()
@@ -250,35 +252,43 @@ class HomeFragment : Fragment() {
     private fun parseData(data: String) {
         Log.d("HomeFragment", "Parsing data: $data")
         val parts = data.split("|")
-        if (parts.size == 1) {
+        Log.d("HomeFragment","Tamaño de partes: ${parts.size}")
+        if (parts.size == 3) {
             try {
                 // Parsear todos los datos a el formato correspondiente
                 estadoVerde = parts[0].toInt()
                 estadoAmarillo = parts[1].toInt()
+                estadoRojo = parts[2].toInt()
             } catch (e: NumberFormatException) {
                 Log.e("homeFragment", "Error parsing data: ${e.message}")
             }
         } else {
-            Log.e("homeFragment", "Data format error: expected 2 parts, got ${parts.size}")
+            Log.e("homeFragment", "Data format error: expected 3 parts, got ${parts.size}")
         }
 
     }
 
 
     private fun updateUI() {
-        Log.d("HomeFragment", "Conectado")
+        Log.d("HomeFragment", "Actualizando UI")
         binding.txtConectado.text = "Conectado"
         binding.imgHablando.setImageResource(R.drawable.hablar_on)
         binding.estadoSemaforo.visibility = View.VISIBLE
-        if (estadoSemaforo == 1) {
-            binding.estadoSemaforo.text = "Estado del semaforo: Rojo"
+        Log.d("HomeFragment","estado verde: $estadoVerde")
+        Log.d("HomeFragment","estado amarillo: $estadoAmarillo")
+        Log.d("HomeFragment","estado rojo: $estadoRojo")
 
+        if (estadoVerde == 1) {
+            binding.estadoSemaforo.text = "Estado del semaforo: Rojo"
+            playAudio(R.raw.semaforo_verde)
         }
-        else if (estadoSemaforo == 1) {
+        else if (estadoAmarillo == 1) {
             binding.estadoSemaforo.text = "Estado del semaforo: Amarillo"
+            playAudio(R.raw.semaforo_amarillo)
         }
-        else if (estadoSemaforo == 1) {
+        else if (estadoRojo == 1) {
             binding.estadoSemaforo.text = "Estado del semaforo: Verde"
+            playAudio(R.raw.semaforo_rojo)
         }
 
 
