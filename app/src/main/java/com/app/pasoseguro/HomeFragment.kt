@@ -56,8 +56,8 @@ class HomeFragment : Fragment() {
     private var bluetoothSocket: BluetoothSocket? = null
     private lateinit var bluetoothManager: BluetoothManager
     private var isConnected: Boolean = false
-    val targetDeviceName = "HC-05"
-    val targetMacAddress = "00:14:03:19:24:58"
+    val targetDeviceName = "XM-15"
+    val targetMacAddress = "00:11:35:96:97:45"
     private lateinit var deviceBluetooth: MutableList<BluetoothDevice>//lista mutable de objetos tipo bt_device
     private lateinit var bluetoothDevice: BluetoothDevice
     var estadoSemaforo = 0
@@ -67,8 +67,6 @@ class HomeFragment : Fragment() {
     var estadoVerde = false
     private var mediaPlayer : MediaPlayer? = null
     private val handler = Handler(Looper.getMainLooper())
-    var sp:SoundPool?=null
-    var sonidoReproducir=0
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -86,12 +84,17 @@ class HomeFragment : Fragment() {
         }
         binding.btEscuchar.setOnClickListener{
             playAudio()
+            iniciarSemaforo()
         }
-        sp= SoundPool(1,AudioManager.STREAM_MUSIC,1)
-        sonidoReproducir=sp?.load(context,R.raw.bienvenido,1)!!
         playAudio()
-        iniciarSemaforo()
-        updateUI()
+
+        Log.d("HomeFragment", "isConnected: $isConnected")
+        if (isConnected){
+            updateUI()
+        }else{
+            updateUIWithDeafultValues()
+        }
+
         return binding.root
 
 
@@ -160,42 +163,52 @@ class HomeFragment : Fragment() {
 
     private fun connectToDevice(device: BluetoothDevice) {
         Thread {
-            while (!isConnected){
+            while (!isConnected) {
                 try {
                     val uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
-                    Log.d("HomeFragment", "Creating a socket")
+                    Log.d("HomeFragment", "Creando un socket")
                     val socket = device.createRfcommSocketToServiceRecord(uuid)
                     bluetoothSocket = socket
                     bluetoothAdapter?.cancelDiscovery()
-                    Log.d("HomeFragment", "Trying to connect")
-                    binding.txtConectado.text= "Conectando..."
-                    socket.connect()
+                    Log.d("HomeFragment", "Intentando conectar")
 
+                    // Mostrar mensaje de conexión en progreso solo una vez
                     requireActivity().runOnUiThread {
-                        Log.d("HomeFragment", "Connected to device")
-                        Snackbar.make(requireView(),"Se conectó al dispositivo correctamente",Snackbar.LENGTH_SHORT).show()
-                        isConnected = true
-                        startDataReceiving()
+                        binding.txtConectado.text = "Buscando dispositivo..."
                     }
-                } catch (e: IOException) {
-                    Log.e("HomeFragment", "Error connecting to device: ${e.message}")
+
+                    socket.connect() // Intentar la conexión
+
+                    // Si la conexión es exitosa
                     requireActivity().runOnUiThread {
-                        Snackbar.make(requireView(),"Error al conectar al dispositivo",Snackbar.LENGTH_SHORT
-                        ).show()
+                        Log.d("HomeFragment", "Conectado al dispositivo")
+                        Snackbar.make(requireView(), "Se conectó al dispositivo correctamente", Snackbar.LENGTH_SHORT).show()
+                        binding.txtConectado.text = "Conectado"
+                        isConnected = true
+                        startDataReceiving() // Comenzar a recibir datos
+                    }
+
+                } catch (e: IOException) {
+                    Log.e("HomeFragment", "Error al conectar: ${e.message}")
+                    requireActivity().runOnUiThread {
+                        // No mostrar el error si no se encuentra el dispositivo, solo continuar intentando
+                        binding.txtConectado.text = "Buscando dispositivo..."
                     }
                     Thread.sleep(2000) // Esperar 2 segundos antes de reintentar
+
                 } catch (e: Exception) {
                     isConnected = false
-                    Log.e("HomeFragment", "General error: ${e.message}")
+                    Log.e("HomeFragment", "Error general: ${e.message}")
                     requireActivity().runOnUiThread {
+                        // Error inesperado, solo notificar si es necesario
                         Snackbar.make(requireView(), "Error desconocido", Snackbar.LENGTH_SHORT).show()
                     }
                     Thread.sleep(2000) // Esperar 2 segundos antes de reintentar
                 }
-
             }
         }.start()
     }
+
 
     private fun startDataReceiving() {
         val socket = bluetoothSocket
@@ -216,6 +229,7 @@ class HomeFragment : Fragment() {
                         for (i in 0 until lines.size - 1) {
                             val line = lines[i].trim()
                             if (line.isNotEmpty()) {
+                                Log.d("HomeFragment", "Received data: $line")
                                 parseData(line)
                             }
                         }
@@ -234,30 +248,47 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun parseData(data: String){
-        Log.d("HomeFragment", "Parsing data")
-        val parts = data.split("|")
-        if (parts.size == 3){
-            try {
-                estadoSemaforo = parts[0].toInt()
-            } catch (e: NumberFormatException) {
-                Log.e("HomeFragment", "Error parsing data: ${e.message}")
+    private fun parseData(data: String) {
+        Log.d("HomeFragment", "Parsing data: $data")
+        try {
+            val estadoSemaforo = data.trim().toInt()  // Lee el estado recibido
+            Log.d("HomeFragment", "Estado recibido: $estadoSemaforo")
+            when (estadoSemaforo) {
+                1 -> {
+                    Log.d("HomeFragment", "Semáforo Rojo")
+                }
+                2 -> {
+                    Log.d("HomeFragment", "Semáforo Amarillo")
+                }
+                3 -> {
+                    Log.d("HomeFragment", "Semáforo Verde")
+                }
+                else -> {
+                    Log.e("HomeFragment", "Estado no reconocido")
+                }
             }
-        } else {
-            Log.e("HomeFragment", "Data format error: expectet 1 part but got ${parts.size}")
+        } catch (e: NumberFormatException) {
+            Log.e("HomeFragment", "Error parsing data: ${e.message}")
         }
     }
 
+
     private fun updateUI() {
-        Log.d("HomeFragment", "isConnected: $isConnected")
-        if (isConnected){
-            Log.d("HomeFragment", "Conectado")
-            binding.txtConectado.text = "Conectado"
+        Log.d("HomeFragment", "Conectado")
+        binding.txtConectado.text = "Conectado"
+        binding.imgHablando.setImageResource(R.drawable.hablar_on)
+        binding.estadoSemaforo.visibility = View.VISIBLE
+        if (estadoSemaforo == 1) {
+            binding.estadoSemaforo.text = "Estado del semaforo: Rojo"
+
         }
-        else {
-            Log.d("HomeFragment", "Desconectado")
-            binding.txtConectado.text = "Desconectado"
+        else if (estadoSemaforo == 2) {
+            binding.estadoSemaforo.text = "Estado del semaforo: Amarillo"
         }
+        else if (estadoSemaforo == 3) {
+            binding.estadoSemaforo.text = "Estado del semaforo: Verde"
+        }
+
 
     }
     private fun cambiarColor(view: View, color: Int) {
@@ -285,24 +316,22 @@ class HomeFragment : Fragment() {
         }
     }
     private fun updateUIWithDeafultValues(){
-        isConnected = false
+        binding.estadoSemaforo.visibility = View.INVISIBLE
+        Log.d("HomeFragment", "Desconectado")
+        binding.txtConectado.text = "Desconectado"
 
     }
 
     private fun playAudio() {
-        sp?.play(sonidoReproducir,1f,1f,1,0,1f)
-    }
-
-    private fun disconnectBT() {
-        try {
-            bluetoothSocket?.close()
-            updateUIWithDeafultValues()
-        } catch (e: IOException) { e.printStackTrace()
-            Log.e("HomeFragment","Error desconectando: ${e.message}")
+        mediaPlayer = MediaPlayer.create(requireContext(), R.raw.bienvenido)
+        if (mediaPlayer == null) {
+            Log.e("MediaPlayer", "Error al crear el MediaPlayer")
+        } else {
+            mediaPlayer?.start()
         }
     }
 
-    override fun onDestroyView() {
+        override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
         if (bluetoothSocket != null) {
