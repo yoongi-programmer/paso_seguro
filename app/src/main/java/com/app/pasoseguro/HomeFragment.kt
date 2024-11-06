@@ -27,6 +27,8 @@ import android.media.MediaPlayer
 import android.net.Uri
 import android.media.AudioManager
 import android.media.SoundPool
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
@@ -56,9 +58,9 @@ class HomeFragment : Fragment() {
     private var bluetoothSocket: BluetoothSocket? = null
     private lateinit var bluetoothManager: BluetoothManager
     private var isConnected: Boolean = false
-    val targetDeviceName = "XM-15"
+    val targetDeviceName = "HC-05"
     val targetMacAddress = "00:11:35:96:97:45"
-    private lateinit var deviceBluetooth: MutableList<BluetoothDevice>//lista mutable de objetos tipo bt_device
+    private lateinit var devicesBluetooth: MutableList<BluetoothDevice>//lista mutable de objetos tipo bt_device
     private lateinit var bluetoothDevice: BluetoothDevice
     var estadoSemaforo = 0
     private var semaforoActivo = true
@@ -82,12 +84,44 @@ class HomeFragment : Fragment() {
             Log.d("HomeFragment", "Requesting permissions for android 11-")
             requestLegacyBluetoothPermissions()// Solicitar permisos de Bluetooth para Android 11 y anteriores
         }
+        //SELECCION DE DISPOSITIVO BT AL QUE CONECTARSE------------------------------------
+        binding.spinnerBT.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                if (devicesBluetooth.isNotEmpty()) {
+                    Log.d("homeFragment", "Selected device: ${devicesBluetooth[position].name}")
+                    val device = devicesBluetooth[position]
+                    connectToDevice(device)
+                }
+            }
+            override fun onNothingSelected(parent: AdapterView<*>) {
+                Snackbar.make(requireView(), "Seleccione un dispositivo", Snackbar.LENGTH_SHORT).show()
+            }
+        }
         binding.btEscuchar.setOnClickListener{
+            semaforoActivo = true
             iniciarSemaforo()
         }
-        playAudio(R.raw.bienvenido)
+        binding.btnPararSemaforo.setOnClickListener {
+            detenerSemaforo()
+        }
+        playAudio(R.raw.buscando)
+        val handler = Handler(Looper.getMainLooper())
+        handler.postDelayed({
+            // Código que quieres ejecutar después del delay
+            playAudio(R.raw.conexion)
+            isConnected = true
+            handler.postDelayed({
+                // Código que quieres ejecutar después del delay
+                playAudio(R.raw.calle)
+                handler.postDelayed({
+                    // Código que quieres ejecutar después del delay
+                    playAudio(R.raw.cruce_dificil)
 
+                }, 4000) // 4000 milisegundos = 4 segundos
+            }, 4000)
+        }, 4000)
         Log.d("HomeFragment", "isConnected: $isConnected")
+        updateUI()
         if (isConnected){
             updateUI()
         }else{
@@ -142,21 +176,42 @@ class HomeFragment : Fragment() {
     }
 
     private fun searchAndDisplayBluetoothDevice() {//Funcion para buscar y mostrar dispositivos BT
+        Log.d("HomeFragment", "Searching for Bluetooth device")
         // Verificar si el Bluetooth está habilitado
         if (bluetoothAdapter == null || !bluetoothAdapter!!.isEnabled) {// Verificar si el Bluetooth está habilitado
             enableBluetoothLauncher.launch(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE))// Solicitar al usuario que habilite el Bluetooth
         } else {
             val pairedDevices: Set<BluetoothDevice>? =
                 bluetoothAdapter?.bondedDevices// Obtener la lista de dispositivos Bluetooth emparejados
+
             pairedDevices?.forEach { device ->
                 if (device.name == targetDeviceName) {
                     // Intentar conectarse automáticamente al dispositivo encontrado
                     connectToDevice(device)
                 }
             }
+
             val device: BluetoothDevice = bluetoothAdapter!!.getRemoteDevice(targetMacAddress)
             connectToDevice(device)
+            if (!pairedDevices.isNullOrEmpty()) {
+                devicesBluetooth = pairedDevices.toMutableList()
 
+                // Convertir la lista de dispositivos en una lista de nombres para mostrar, evitando nombres nulos
+                val deviceNames = devicesBluetooth.mapNotNull { it.name ?: "Dispositivo desconocido" }
+
+                // Si la lista tiene elementos, asigna el ArrayAdapter
+                if (deviceNames.isNotEmpty()) {
+                    val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_expandable_list_item_1, deviceNames)
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                    binding.spinnerBT.adapter = adapter
+                } else {
+                    // Mostrar mensaje si no hay nombres válidos
+                    Snackbar.make(requireView(), "No hay dispositivos con nombres válidos", Snackbar.LENGTH_SHORT).show()
+                }
+            } else {
+                // Mostrar mensaje si no hay dispositivos emparejados
+                Snackbar.make(requireView(), "No hay dispositivos Bluetooth emparejados", Snackbar.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -191,7 +246,7 @@ class HomeFragment : Fragment() {
                     Log.i("HomeFragment", "No se encontraron dispositivos: ${e.message}")
                     requireActivity().runOnUiThread {
                         // No mostrar el error si no se encuentra el dispositivo, solo continuar intentando
-                        binding.txtConectado.text = "Buscando dispositivo..."
+                        //binding.txtConectado.text = "Buscando dispositivo..."
                     }
                     Thread.sleep(2000) // Esperar 2 segundos antes de reintentar
 
@@ -268,28 +323,22 @@ class HomeFragment : Fragment() {
 
     }
 
-
     private fun updateUI() {
         Log.d("HomeFragment", "Actualizando UI")
         binding.txtConectado.text = "Conectado"
-        binding.imgHablando.setImageResource(R.drawable.hablar_on)
-        binding.estadoSemaforo.visibility = View.VISIBLE
         Log.d("HomeFragment","estado verde: $estadoVerde")
         Log.d("HomeFragment","estado amarillo: $estadoAmarillo")
         Log.d("HomeFragment","estado rojo: $estadoRojo")
 
-        if (estadoVerde == 1) {
-            binding.estadoSemaforo.text = "Estado del semaforo: Rojo"
-            playAudio(R.raw.semaforo_verde)
-        }
-        else if (estadoAmarillo == 1) {
-            binding.estadoSemaforo.text = "Estado del semaforo: Amarillo"
-            playAudio(R.raw.semaforo_amarillo)
-        }
-        else if (estadoRojo == 1) {
-            binding.estadoSemaforo.text = "Estado del semaforo: Verde"
-            playAudio(R.raw.semaforo_rojo)
-        }
+//        if (estadoVerde == 1) {
+//            playAudio(R.raw.semaforo_verde)
+//        }
+//        else if (estadoAmarillo == 1) {
+//            playAudio(R.raw.semaforo_amarillo)
+//        }
+//        else if (estadoRojo == 1) {
+//            playAudio(R.raw.semaforo_rojo)
+//        }
 
 
     }
@@ -301,35 +350,54 @@ class HomeFragment : Fragment() {
         if (semaforoActivo) {
             // Luz roja
             cambiarColor(binding.luzRoja, R.color.rojo_on)
+            playAudio(R.raw.semaforo_rojo)
             handler.postDelayed({
                 cambiarColor(binding.luzRoja, R.color.rojo_off)
                 // Luz amarilla
                 cambiarColor(binding.luzAmarilla, R.color.amarillo_on)
+                playAudio(R.raw.semaforo_amarillo)
                 handler.postDelayed({
                     cambiarColor(binding.luzAmarilla, R.color.amarillo_off)
                     // Luz verde
                     cambiarColor(binding.luzVerde, R.color.verde_on)
+                    playAudio(R.raw.semaforo_verde)
                     handler.postDelayed({
                         cambiarColor(binding.luzVerde, R.color.verde_off)
                         iniciarSemaforo() // Reiniciar ciclo
-                    }, 5000) // 3 segundos para verde
-                }, 3000) // 1 segundo para amarillo
-            }, 5000) // 5 segundos para rojo
+                    }, 9500) // 3 segundos para verde
+                }, 6000) // 1 segundo para amarillo
+            }, 8000) // 5 segundos para rojo
         }
     }
+    private fun detenerSemaforo() {
+        // Luz roja
+        cambiarColor(binding.luzRoja, R.color.rojo_off)
+        // Luz amarilla
+        cambiarColor(binding.luzAmarilla, R.color.amarillo_off)
+        // Luz verde
+        cambiarColor(binding.luzVerde, R.color.verde_off)
+        semaforoActivo = false
+    }
     private fun updateUIWithDeafultValues(){
-        binding.estadoSemaforo.visibility = View.INVISIBLE
         Log.d("HomeFragment", "Desconectado")
         binding.txtConectado.text = "Desconectado"
 
     }
 
     private fun playAudio(audioResID: Int) {
-        mediaPlayer = MediaPlayer.create(requireContext(), audioResID)
-        if (mediaPlayer == null) {
-            Log.e("MediaPlayer", "Error al crear el MediaPlayer")
-        } else {
-            mediaPlayer?.start()
+        try {
+            mediaPlayer = MediaPlayer.create(requireContext(), audioResID)
+            mediaPlayer?.let {
+                it.setOnPreparedListener { player -> player.start() }
+                it.setOnErrorListener { player, what, extra ->
+                    Log.e("MediaPlayer", "Error al preparar el MediaPlayer: what=$what, extra=$extra")
+                    true // Indica que el error fue manejado
+                }
+            } ?: run {
+                Log.e("MediaPlayer", "Error al crear el MediaPlayer")
+            }
+        } catch (e: Exception) {
+            Log.e("MediaPlayer", "Excepción al reproducir audio: ${e.message}")
         }
     }
 

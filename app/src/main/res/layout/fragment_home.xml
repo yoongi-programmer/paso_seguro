@@ -21,6 +21,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0">
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/container"
                 android:layout_width="match_parent"
@@ -45,19 +46,31 @@
                     app:layout_constraintVertical_bias="0.24" />
 
                 <TextView
-                    android:id="@+id/estadoSemaforo"
+                    android:id="@+id/calle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Estado del semaforo"
-                    android:textSize="30sp"
+                    android:text="@string/calle"
+                    android:textColor="@color/verde_agua_oscuro"
+                    android:textSize="28sp"
+                    android:visibility="visible"
                     android:textStyle="bold"
-                    android:visibility="invisible"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.502"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/name_app"
-                    app:layout_constraintVertical_bias="0.129" />
+                    app:layout_constraintVertical_bias="0.193" />
+
+                <Spinner
+                    android:id="@+id/spinnerBT"
+                    android:layout_width="350dp"
+                    android:layout_height="50dp"
+                    android:visibility="visible"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.975" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -171,12 +184,13 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_bias="0.911"/>
 
-                <ImageView
-                    android:id="@+id/img_hablando"
+                <ImageButton
+                    android:id="@+id/btnPararSemaforo"
                     android:layout_width="95dp"
                     android:layout_height="95dp"
-                    android:contentDescription="@string/desconectado"
-                    android:src="@drawable/hablar_off"
+                    android:background="@drawable/btn_img"
+                    android:scaleType="fitCenter"
+                    android:contentDescription="Boton para detener el semaforo"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
@@ -184,6 +198,7 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_bias="0.65"
                     />
+
                 <TextView
                     android:id="@+id/txt_conectado"
                     android:layout_width="wrap_content"
