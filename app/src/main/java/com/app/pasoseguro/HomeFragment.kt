@@ -104,7 +104,7 @@ class HomeFragment : Fragment() {
         binding.btnPararSemaforo.setOnClickListener {
             detenerSemaforo()
         }
-        playAudio(R.raw.buscando)
+
         val handler = Handler(Looper.getMainLooper())
         handler.postDelayed({
             // Código que quieres ejecutar después del delay
@@ -180,7 +180,9 @@ class HomeFragment : Fragment() {
         // Verificar si el Bluetooth está habilitado
         if (bluetoothAdapter == null || !bluetoothAdapter!!.isEnabled) {// Verificar si el Bluetooth está habilitado
             enableBluetoothLauncher.launch(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE))// Solicitar al usuario que habilite el Bluetooth
-        } else {
+        }
+        else {
+            playAudio(R.raw.buscando)
             val pairedDevices: Set<BluetoothDevice>? =
                 bluetoothAdapter?.bondedDevices// Obtener la lista de dispositivos Bluetooth emparejados
 
@@ -208,7 +210,8 @@ class HomeFragment : Fragment() {
                     // Mostrar mensaje si no hay nombres válidos
                     Snackbar.make(requireView(), "No hay dispositivos con nombres válidos", Snackbar.LENGTH_SHORT).show()
                 }
-            } else {
+            }
+            else {
                 // Mostrar mensaje si no hay dispositivos emparejados
                 Snackbar.make(requireView(), "No hay dispositivos Bluetooth emparejados", Snackbar.LENGTH_SHORT).show()
             }
@@ -262,7 +265,6 @@ class HomeFragment : Fragment() {
             }
         }.start()
     }
-
 
     private fun startDataReceiving() {
         Log.d("HomeFragment", "Recibiendo datos:")
@@ -330,15 +332,15 @@ class HomeFragment : Fragment() {
         Log.d("HomeFragment","estado amarillo: $estadoAmarillo")
         Log.d("HomeFragment","estado rojo: $estadoRojo")
 
-//        if (estadoVerde == 1) {
-//            playAudio(R.raw.semaforo_verde)
-//        }
-//        else if (estadoAmarillo == 1) {
-//            playAudio(R.raw.semaforo_amarillo)
-//        }
-//        else if (estadoRojo == 1) {
-//            playAudio(R.raw.semaforo_rojo)
-//        }
+        if (estadoVerde == 1) {
+            playAudio(R.raw.semaforo_verde)
+        }
+        else if (estadoAmarillo == 1) {
+            playAudio(R.raw.semaforo_amarillo)
+        }
+        else if (estadoRojo == 1) {
+            playAudio(R.raw.semaforo_rojo)
+        }
 
 
     }
@@ -383,8 +385,52 @@ class HomeFragment : Fragment() {
         binding.txtConectado.text = "Desconectado"
 
     }
-
     private fun playAudio(audioResID: Int) {
+        // Verificar si ya hay un MediaPlayer reproduciendo
+        if (mediaPlayer?.isPlaying == true) {
+            // Si ya está reproduciendo, no hacer nada
+            Log.d("MediaPlayer", "Ya hay un audio reproduciéndose, no se reproducirá uno nuevo.")
+            return
+        }
+
+        try {
+            // Crear un nuevo MediaPlayer para el audio
+            mediaPlayer = MediaPlayer.create(requireContext(), audioResID)
+
+            mediaPlayer?.let { player ->
+                // Establecer un listener para cuando el MediaPlayer esté preparado
+                player.setOnPreparedListener {
+                    it.start()  // Inicia la reproducción tan pronto como esté listo
+                }
+
+                // Listener para manejar errores en el MediaPlayer
+                player.setOnErrorListener { _, what, extra ->
+                    Log.e("MediaPlayer", "Error al preparar el MediaPlayer: what=$what, extra=$extra")
+                    true // Indica que el error fue manejado
+                }
+
+                // Listener para cuando el MediaPlayer termine de reproducir el audio
+                player.setOnCompletionListener {
+                    Log.d("MediaPlayer", "Reproducción terminada.")
+                    // Liberar el MediaPlayer después de que termine de reproducirse
+                    it.release()
+                    mediaPlayer = null // Liberar la referencia del MediaPlayer
+                    Log.d("MediaPlayer", "MediaPlayer liberado.")
+
+                    // Ahora puedes reproducir el siguiente audio si es necesario
+                    // (En este caso no estamos llamando a otro audio directamente,
+                    // pero puedes hacerlo si tienes una cola de reproducción).
+                }
+
+            } ?: run {
+                Log.e("MediaPlayer", "Error al crear el MediaPlayer")
+            }
+
+        } catch (e: Exception) {
+            Log.e("MediaPlayer", "Excepción al reproducir audio: ${e.message}")
+        }
+    }
+    private fun playAudio2(audioResID: Int) {
         try {
             mediaPlayer = MediaPlayer.create(requireContext(), audioResID)
             mediaPlayer?.let {
