@@ -11,215 +11,224 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
+            android:layout_height="match_parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/container"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="255dp">
-
-                <TextView
-                    android:id="@+id/name_app"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:shadowColor="#800000"
-                    android:shadowDx="2"
-                    android:shadowDy="2"
-                    android:shadowRadius="3"
-                    android:text="@string/msj_bienvenida"
-                    android:textColor="@color/white"
-                    android:textSize="60sp"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.24" />
-
-                <TextView
-                    android:id="@+id/calle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/calle"
-                    android:textColor="@color/verde_agua_oscuro"
-                    android:textSize="28sp"
-                    android:visibility="visible"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/name_app"
-                    app:layout_constraintVertical_bias="0.193" />
-
-                <Spinner
-                    android:id="@+id/spinnerBT"
-                    android:layout_width="350dp"
-                    android:layout_height="50dp"
-                    android:visibility="visible"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.975" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/container2"
-                android:layout_width="match_parent"
-                android:layout_height="512dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.563"
+                app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.181">
-
-                <View
-                    android:id="@+id/container_semaforo"
-                    android:layout_width="200dp"
-                    android:layout_height="475dp"
-                    android:background="@drawable/forma_semaforo"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.5"></View>
+                app:layout_constraintVertical_bias="0.0">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="200dp"
-                    android:layout_height="475dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.5">
+                    android:id="@+id/container"
+                    android:layout_width="match_parent"
+                    android:layout_height="255dp">
 
-                    <View
-                        android:id="@+id/luz_roja"
-                        android:layout_width="120dp"
-                        android:layout_height="120dp"
-                        android:background="@drawable/luz_roja"
-                        app:layout_constraintBottom_toTopOf="@id/luz_amarilla"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_bias="0.547">
-
-                    </View>
-
-                    <View
-                        android:id="@+id/luz_amarilla"
-                        android:layout_width="120dp"
-                        android:layout_height="120dp"
-                        android:background="@drawable/luz_amarilla"
-                        app:layout_constraintBottom_toTopOf="@id/luz_verde"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/luz_roja"
-                        app:layout_constraintVertical_bias="0.865"></View>
-
-                    <View
-                        android:id="@+id/luz_verde"
-                        android:layout_width="120dp"
-                        android:layout_height="120dp"
-                        android:background="@drawable/luz_verde"
+                    <TextView
+                        android:id="@+id/name_app"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:shadowColor="#800000"
+                        android:shadowDx="2"
+                        android:shadowDy="2"
+                        android:shadowRadius="3"
+                        android:text="@string/msj_bienvenida"
+                        android:textColor="@color/white"
+                        android:textSize="60sp"
+                        android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/luz_amarilla"
-                        app:layout_constraintVertical_bias="0.89"></View>
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.24" />
+
+                    <TextView
+                        android:id="@+id/calle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/calle"
+                        android:textColor="@color/verde_agua_oscuro"
+                        android:textSize="28sp"
+                        android:visibility="visible"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/name_app"
+                        app:layout_constraintVertical_bias="0.193" />
+
+                    <Spinner
+                        android:id="@+id/spinnerBT"
+                        android:layout_width="350dp"
+                        android:layout_height="50dp"
+                        android:visibility="visible"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.975" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/container3"
-                android:layout_width="match_parent"
-                android:layout_height="230dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.559"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.1">
-
-                <Button
-                    android:id="@+id/bt_escuchar"
-                    android:layout_width="200dp"
-                    android:layout_height="45dp"
-                    android:background="@drawable/btn_forma"
-                    android:text="@string/escuchar"
-                    android:textColor="@color/white"
-                    android:textSize="20sp"
-                    app:backgroundTint="@color/verde_agua"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/container2"
+                    android:layout_width="match_parent"
+                    android:layout_height="512dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintHorizontal_bias="0.563"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.137" />
+                    app:layout_constraintVertical_bias="0.181">
 
-                <View
-                    android:id="@+id/barra_inferior"
-                    android:layout_width="350dp"
-                    android:layout_height="60dp"
-                    android:background="@drawable/rectangulo_gris"
+                    <View
+                        android:id="@+id/container_semaforo"
+                        android:layout_width="200dp"
+                        android:layout_height="475dp"
+                        android:background="@drawable/forma_semaforo"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.5"/>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="200dp"
+                        android:layout_height="475dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.5">
+
+                        <View
+                            android:id="@+id/luz_roja"
+                            android:layout_width="120dp"
+                            android:layout_height="120dp"
+                            android:background="@drawable/luz_roja"
+                            app:layout_constraintBottom_toTopOf="@id/luz_amarilla"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintVertical_bias="0.547">
+
+                        </View>
+
+                        <View
+                            android:id="@+id/luz_amarilla"
+                            android:layout_width="120dp"
+                            android:layout_height="120dp"
+                            android:background="@drawable/luz_amarilla"
+                            app:layout_constraintBottom_toTopOf="@id/luz_verde"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/luz_roja"
+                            app:layout_constraintVertical_bias="0.865"/>
+
+                        <View
+                            android:id="@+id/luz_verde"
+                            android:layout_width="120dp"
+                            android:layout_height="120dp"
+                            android:background="@drawable/luz_verde"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/luz_amarilla"
+                            app:layout_constraintVertical_bias="0.89"/>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/container3"
+                    android:layout_width="match_parent"
+                    android:layout_height="230dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintHorizontal_bias="0.559"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.911"/>
+                    app:layout_constraintVertical_bias="0.1">
 
-                <ImageButton
-                    android:id="@+id/btnPararSemaforo"
-                    android:layout_width="95dp"
-                    android:layout_height="95dp"
-                    android:background="@drawable/btn_img"
-                    android:scaleType="fitCenter"
-                    android:contentDescription="Boton para detener el semaforo"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.65"
-                    />
+                    <Button
+                        android:id="@+id/bt_escuchar"
+                        android:layout_width="200dp"
+                        android:layout_height="45dp"
+                        android:background="@drawable/btn_forma"
+                        android:text="@string/escuchar"
+                        android:textColor="@color/white"
+                        android:textSize="20sp"
+                        app:backgroundTint="@color/verde_agua"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.137" />
 
-                <TextView
-                    android:id="@+id/txt_conectado"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/desconectado"
-                    android:textColor="@color/verde_agua_oscuro"
-                    android:textStyle="bold"
-                    android:textSize="24sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.9"
-                    />
+                    <View
+                        android:id="@+id/barra_inferior"
+                        android:layout_width="350dp"
+                        android:layout_height="60dp"
+                        android:background="@drawable/rectangulo_gris"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.911"/>
+
+                    <ImageButton
+                        android:id="@+id/btnPararSemaforo"
+                        android:layout_width="95dp"
+                        android:layout_height="95dp"
+                        android:background="@drawable/btn_img"
+                        android:scaleType="fitCenter"
+                        android:contentDescription="Boton para detener el semaforo"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.65"
+                        />
+
+                    <TextView
+                        android:id="@+id/txt_conectado"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/desconectado"
+                        android:textColor="@color/verde_agua_oscuro"
+                        android:textStyle="bold"
+                        android:textSize="24sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.9"
+                        />
 
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-        </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>
