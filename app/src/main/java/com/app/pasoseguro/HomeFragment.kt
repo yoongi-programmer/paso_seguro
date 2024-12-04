@@ -108,29 +108,27 @@ class HomeFragment : Fragment() {
         val handler = Handler(Looper.getMainLooper())
         handler.postDelayed({
             // Código que quieres ejecutar después del delay
-            playAudio(R.raw.conexion)
+//            playAudio(R.raw.conexion)
             isConnected = true
             handler.postDelayed({
                 // Código que quieres ejecutar después del delay
-                playAudio(R.raw.calle)
+//                playAudio(R.raw.calle)
                 handler.postDelayed({
                     // Código que quieres ejecutar después del delay
-                    playAudio(R.raw.cruce_dificil)
+//                    playAudio(R.raw.cruce_dificil)
 
                 }, 4000) // 4000 milisegundos = 4 segundos
             }, 4000)
         }, 4000)
-        Log.d("HomeFragment", "isConnected: $isConnected")
-        updateUI()
-        if (isConnected){
-            updateUI()
-        }else{
-            updateUIWithDeafultValues()
-        }
+//        Log.d("HomeFragment", "isConnected: $isConnected")
+//        updateUI()
+//        if (isConnected){
+//            updateUI()
+//        }else{
+//            updateUIWithDeafultValues()
+//        }
 
         return binding.root
-
-
     }
 
     private fun requestLegacyBluetoothPermissions() {//Funcion para solicita permisos bt a android 11 e inferiores
@@ -189,12 +187,13 @@ class HomeFragment : Fragment() {
             pairedDevices?.forEach { device ->
                 if (device.name == targetDeviceName) {
                     // Intentar conectarse automáticamente al dispositivo encontrado
+                    Log.d("HomeFragment","$device.name dispositivo")
                     connectToDevice(device)
                 }
             }
 
-            val device: BluetoothDevice = bluetoothAdapter!!.getRemoteDevice(targetMacAddress)
-            connectToDevice(device)
+            //val device: BluetoothDevice = bluetoothAdapter!!.getRemoteDevice(targetMacAddress)
+            //connectToDevice(device)
             if (!pairedDevices.isNullOrEmpty()) {
                 devicesBluetooth = pairedDevices.toMutableList()
 
@@ -220,48 +219,46 @@ class HomeFragment : Fragment() {
 
     private fun connectToDevice(device: BluetoothDevice) {
         Thread {
-            while (!isConnected) {
-                try {
-                    val uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
-                    Log.d("HomeFragment", "Creando un socket")
-                    val socket = device.createRfcommSocketToServiceRecord(uuid)
-                    bluetoothSocket = socket
-                    bluetoothAdapter?.cancelDiscovery()
-                    Log.d("HomeFragment", "Intentando conectar")
+            try {
+                val uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
+                Log.d("HomeFragment", "Creando un socket")
+                val socket = device.createRfcommSocketToServiceRecord(uuid)
+                bluetoothSocket = socket
+                bluetoothAdapter?.cancelDiscovery()
+                Log.d("HomeFragment", "Intentando conectar")
 
-                    // Mostrar mensaje de conexión en progreso solo una vez
-                    requireActivity().runOnUiThread {
-                        binding.txtConectado.text = "Buscando dispositivo..."
-                    }
-
-                    socket.connect() // Intentar la conexión
-
-                    // Si la conexión es exitosa
-                    requireActivity().runOnUiThread {
-                        Log.d("HomeFragment", "Conectado al dispositivo")
-                        Snackbar.make(requireView(), "Se conectó al dispositivo correctamente", Snackbar.LENGTH_SHORT).show()
-                        binding.txtConectado.text = "Conectado"
-                        isConnected = true
-                        startDataReceiving() // Comenzar a recibir datos
-                    }
-
-                } catch (e: IOException) {
-                    Log.i("HomeFragment", "No se encontraron dispositivos: ${e.message}")
-                    requireActivity().runOnUiThread {
-                        // No mostrar el error si no se encuentra el dispositivo, solo continuar intentando
-                        //binding.txtConectado.text = "Buscando dispositivo..."
-                    }
-                    Thread.sleep(2000) // Esperar 2 segundos antes de reintentar
-
-                } catch (e: Exception) {
-                    isConnected = false
-                    Log.e("HomeFragment", "Error general: ${e.message}")
-                    requireActivity().runOnUiThread {
-                        // Error inesperado, solo notificar si es necesario
-                        Snackbar.make(requireView(), "Error desconocido", Snackbar.LENGTH_SHORT).show()
-                    }
-                    Thread.sleep(2000) // Esperar 2 segundos antes de reintentar
+                // Mostrar mensaje de conexión en progreso solo una vez
+                requireActivity().runOnUiThread {
+                    binding.txtConectado.text = "Buscando dispositivo..."
                 }
+
+                socket.connect() // Intentar la conexión
+
+                // Si la conexión es exitosa
+                requireActivity().runOnUiThread {
+                    Log.d("HomeFragment", "Conectado al dispositivo")
+                    Snackbar.make(requireView(), "Se conectó al dispositivo correctamente", Snackbar.LENGTH_SHORT).show()
+                    binding.txtConectado.text = "Conectado"
+                    isConnected = true
+                    startDataReceiving() // Comenzar a recibir datos
+                }
+
+            } catch (e: IOException) {
+                Log.i("HomeFragment", "No se encontraron dispositivos: ${e.message}")
+                requireActivity().runOnUiThread {
+                    // No mostrar el error si no se encuentra el dispositivo, solo continuar intentando
+                    //binding.txtConectado.text = "Buscando dispositivo..."
+                }
+                Thread.sleep(2000) // Esperar 2 segundos antes de reintentar
+
+            } catch (e: Exception) {
+                isConnected = false
+                Log.e("HomeFragment", "Error general: ${e.message}")
+                requireActivity().runOnUiThread {
+                    // Error inesperado, solo notificar si es necesario
+                    Snackbar.make(requireView(), "Error desconocido", Snackbar.LENGTH_SHORT).show()
+                }
+                Thread.sleep(2000) // Esperar 2 segundos antes de reintentar
             }
         }.start()
     }
@@ -333,13 +330,13 @@ class HomeFragment : Fragment() {
         Log.d("HomeFragment","estado rojo: $estadoRojo")
 
         if (estadoVerde == 1) {
-            playAudio(R.raw.semaforo_verde)
+            playAudio2(R.raw.semaforo_verde)
         }
         else if (estadoAmarillo == 1) {
-            playAudio(R.raw.semaforo_amarillo)
+            playAudio2(R.raw.semaforo_amarillo)
         }
         else if (estadoRojo == 1) {
-            playAudio(R.raw.semaforo_rojo)
+            playAudio2(R.raw.semaforo_rojo)
         }
 
 
